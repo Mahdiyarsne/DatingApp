@@ -1,0 +1,7 @@
+ul{
+   margin-right: 50%;
+}
+
+.dropdown-toggle, .dropdown-item {
+    cursor: pointer;
+}
