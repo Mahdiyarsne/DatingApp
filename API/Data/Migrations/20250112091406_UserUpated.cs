@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class UserAdded : Migration
+    public partial class UserUpated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,7 @@ namespace API.Data.Migrations
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     LastAactive = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Gender = table.Column<string>(type: "TEXT", nullable: false),
-                    Interduction = table.Column<string>(type: "TEXT", nullable: true),
+                    Introduction = table.Column<string>(type: "TEXT", nullable: true),
                     Interests = table.Column<string>(type: "TEXT", nullable: true),
                     LookingFor = table.Column<string>(type: "TEXT", nullable: true),
                     City = table.Column<string>(type: "TEXT", nullable: false),

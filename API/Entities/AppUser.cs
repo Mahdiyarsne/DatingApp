@@ -11,17 +11,17 @@ public class AppUser
 
     public byte[] PasswordSalt { get; set; } = [];
 
-    public DateOnly DateOfBirth { get; set; } 
+    public DateOnly DateOfBirth { get; set; }
 
     public required string KnownAs { get; set; }
 
-    public DateTime Created {  get; set; }  = DateTime.UtcNow;
+    public DateTime Created { get; set; } = DateTime.UtcNow;
 
     public DateTime LastAactive { get; set; } = DateTime.UtcNow;
 
     public required string Gender { get; set; }
 
-    public string? Interduction { get; set; }    
+    public string? Introduction { get; set; }
 
     public string? Interests { get; set; }
 
@@ -32,5 +32,4 @@ public class AppUser
     public required string Country { get; set; }
 
     public List<Photo> Photos { get; set; } = [];
-
 }
