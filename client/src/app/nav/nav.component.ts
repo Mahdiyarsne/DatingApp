@@ -13,6 +13,7 @@ import { TitleCasePipe } from '@angular/common';
   styleUrl: './nav.component.css',
 })
 export class NavComponent {
+  
   accountService = inject(AccountService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
