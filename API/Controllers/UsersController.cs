@@ -16,8 +16,6 @@ namespace API.Controllers
         {
             var users = await userRepository.GetMembersAsync();
 
-
-
             return Ok(users);
         }
 
@@ -33,7 +31,6 @@ namespace API.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-
 
             var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
 
@@ -63,6 +60,8 @@ namespace API.Controllers
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId,
             };
+
+            if (user.Photos.Count == 0) photo.IsMain = true;
 
             user.Photos.Add(photo);
 

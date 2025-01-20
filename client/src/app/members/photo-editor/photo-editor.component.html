@@ -2,7 +2,7 @@
     @for (photo of member().photos; track photo.id) 
     {
     <div class="col-2">
-        <img src="{{photo.url}}" alt="photo of user" class="img-thumbnail">
+        <img src="{{photo.url || './assets/user.png'}}" alt="photo of user" class="img-thumbnail">
         <div class="text-center">
             <button 
             [disabled]="photo.isMain"
