@@ -1,24 +1,34 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MembersService } from '../../_services/members.service';
-
-import { MemberCardComponent } from "../member-card/member-card.component";
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { MemberCardComponent } from '../member-card/member-card.component';
 
 @Component({
   selector: 'app-member-list',
-  imports: [MemberCardComponent],
+  imports: [MemberCardComponent,PaginationModule],
   templateUrl: './member-list.component.html',
   styleUrl: './member-list.component.css',
 })
 export class MemberListComponent implements OnInit {
- memberService = inject(MembersService);
+  memberService = inject(MembersService);
+  pageNumber = 1;
+  pageSize = 5;
+$event: any;
 
   ngOnInit(): void {
-    if(this.memberService.members().length == 0)
-    this.loadMembers();
+    if (!this.memberService.paginationResult()) this.loadMembers();
   }
 
-  loadMembers()
-  {
-    this.memberService.getMembers()
+  loadMembers() {
+    this.memberService.getMembers(this.pageNumber,this.pageSize);
+  }
+
+  pageChanged(event:any){
+   
+    if(this.pageNumber !==  event.page){
+      this.pageNumber = event.page;
+      this.loadMembers();
+    }
+
   }
 }
