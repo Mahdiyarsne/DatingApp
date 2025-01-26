@@ -12,10 +12,10 @@ namespace API.Data.Implementation
     {
         public async Task<MemberDto?> GetMemberAsync(string username)
         {
-            return await context.Users
-                 .Where(x => x.UserName == username)
-                 .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-                 .SingleOrDefaultAsync();
+            return await context
+                .Users.Where(x => x.UserName == username)
+                .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<PageList<MemberDto>> GetMembersAsync(UserParams userParams)
@@ -24,7 +24,7 @@ namespace API.Data.Implementation
 
             query = query.Where(x => x.UserName != userParams.CurrentUsername);
 
-            if(userParams.Gender != null)
+            if (userParams.Gender != null)
             {
                 query = query.Where(x => x.Gender == userParams.Gender);
             }
@@ -41,25 +41,27 @@ namespace API.Data.Implementation
                 _ => query.OrderByDescending(x => x.LastAactive),
             };
 
-            return await PageList<MemberDto>.CreateAaync(query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), userParams.PageNumber, userParams.PageSize);
+            return await PageList<MemberDto>.CreateAaync(
+                query.ProjectTo<MemberDto>(mapper.ConfigurationProvider),
+                userParams.PageNumber,
+                userParams.PageSize
+            );
         }
 
         public async Task<IEnumerable<AppUser>> GetUserAsync()
         {
-            return await context.Users
-               .Include(x => x.Photos)
-                .ToListAsync();
+            return await context.Users.Include(x => x.Photos).ToListAsync();
         }
 
-        public async Task<AppUser?> GetUserById(int id)
+        public async Task<AppUser?> GetUserByIdAsync(int id)
         {
             return await context.Users.FindAsync(id);
         }
 
         public async Task<AppUser?> GetUserByUsernameAsync(string username)
         {
-            return await context.Users
-                .Include(x => x.Photos)
+            return await context
+                .Users.Include(x => x.Photos)
                 .SingleOrDefaultAsync(x => x.UserName == username);
         }
 
@@ -70,7 +72,7 @@ namespace API.Data.Implementation
 
         public void Update(AppUser user)
         {
-            context.Entry(user).State = EntityState.Modified; 
+            context.Entry(user).State = EntityState.Modified;
         }
     }
 }

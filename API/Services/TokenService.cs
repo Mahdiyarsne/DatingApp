@@ -7,20 +7,22 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services
 {
-    public class TokenService (IConfiguration config) : ITokenService
+    public class TokenService(IConfiguration config) : ITokenService
     {
         public string CreateToken(AppUser user)
         {
-            var tokenkey = config["TokenKey"] ?? throw new Exception("Connot access tokenkey from appsitting");
+            var tokenkey =
+                config["TokenKey"] ?? throw new Exception("Connot access tokenkey from appsitting");
 
-            if (tokenkey.Length < 64) throw new Exception("Your token key must be longer");
+            if (tokenkey.Length < 64)
+                throw new Exception("Your token key must be longer");
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenkey));
 
             var claims = new List<Claim>
             {
-              new(ClaimTypes.NameIdentifier, user.UserName)
-
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
             };
 
             var cards = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -36,9 +38,5 @@ namespace API.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
- 
-       
     }
-
 }
