@@ -9,7 +9,10 @@ namespace API.Extensions
 {
     public static class ApplicationServiceExtension
     {
-        public static IServiceCollection AddApplicationService(this IServiceCollection services,IConfiguration config)
+        public static IServiceCollection AddApplicationService(
+            this IServiceCollection services,
+            IConfiguration config
+        )
         {
             services.AddControllers();
             services.AddDbContext<DataContext>(opt =>
@@ -20,6 +23,7 @@ namespace API.Extensions
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPhotoService, PhotoService>();
+            services.AddScoped<ILikesRepository, LikesRepository>();
             services.AddScoped<LogUserActivity>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
