@@ -12,7 +12,7 @@ namespace API.Interfaces
 
         Task<Message?> GetMessage(int id);
 
-        Task<PageList<MessageDto>> GetMessageForUser();
+        Task<PageList<MessageDto>> GetMessageForUser(MessageParams messageParams);
 
         Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername,string recipientUsername);
 
