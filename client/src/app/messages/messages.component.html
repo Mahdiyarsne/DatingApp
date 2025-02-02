@@ -14,9 +14,9 @@
     </div>
 </div>
 
- @if(!messageService.paginationResult()?.items)
+ @if(!messageService.paginationResult()?.items ||messageService.paginationResult()?.items?.length === 0 )
  {
-<h3>No messages</h3>
+<h3 class="mt-3">No messages</h3>
  }@else {
     <table class="table table-hover mt-3" style="cursor: pointer;">
         <thead>
@@ -29,23 +29,23 @@
         </thead>
         <tbody class="align-middle">
             @for (message of messageService.paginationResult()?.items; track message.id) {
-                <tr routerLink="{{getRoute(message)}}">
+                <tr routerLink="{{getRoute(message)}}" [queryParams]="{tabs:'Messages'}">
                     <td>{{message.content}}</td>
                     <td>
                      <div>
                          <img 
-                         [src]="container === 'Outbox' ? 
+                         [src]="isOutbox ? 
                          (message.recipientPhotoUrl || './assets/user.png') : 
                          (message.senderPhotoUrl || './assets/user.png')" 
                          alt="image of user"
                         class="rounded-circle me-2"
                          >
-                         <strong>{{container === 'Outbox' ? 
+                         <strong>{{isOutbox ? 
                          message.recipientUsername : message.senderUsername}}</strong>
                      </div>
                     </td>
                     <td>{{message.messageSent | timeago}}</td>
-                    <td><button class="btn btn-danger">Delete</button></td>
+                    <td (click)="$event.stopPropagation()"><button (click)="deleteMessage(message.id)" class="btn btn-danger">Delete</button></td>
                 
                 </tr>
                }
@@ -53,7 +53,7 @@
     </table>
  }
 
- @if (messageService.paginationResult()?.pagination) {
+ @if (messageService.paginationResult()?.pagination && messageService.paginationResult()?.pagination?.totalItems!>0) {
 
     <div class="d-flex justify-content-center mt-2">
       <pagination

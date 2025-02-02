@@ -9,33 +9,59 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @Component({
   selector: 'app-messages',
-  imports: [ButtonsModule,FormsModule,TimeagoModule,RouterLink,PaginationModule],
+  imports: [
+    ButtonsModule,
+    FormsModule,
+    TimeagoModule,
+    RouterLink,
+    PaginationModule,
+  ],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.css',
 })
 export class MessagesComponent implements OnInit {
- messageService = inject(MessageService);
+  messageService = inject(MessageService);
   container = 'Inbox';
   pageNumber = 1;
   pageSize = 5;
+  isOutbox = this.container === 'Outbox';
 
-  ngOnInit(): void 
-  {
+  ngOnInit(): void {
     this.loadMessage();
   }
 
-
-  loadMessage(){
-    this.messageService.getMessages(this.pageNumber,this.pageSize,this.container);
+  loadMessage() {
+    this.messageService.getMessages(
+      this.pageNumber,
+      this.pageSize,
+      this.container
+    );
   }
 
-  getRoute(message: Message){
-    if(this.container === 'Outbox') return `/members/${message.recipientUsername}`;
+  deleteMessage(id: number) {
+    this.messageService.deleteMessage(id).subscribe({
+      next: () =>{
+        this.messageService.paginationResult.update(prev =>{
+          if(prev && prev.items)
+          {
+            prev.items.splice(prev.items.findIndex(m => m.id === id),1);
+            return prev;
+          }
+          return prev;
+
+        })
+      }
+    })
+  }
+
+  getRoute(message: Message) {
+    if (this.container === 'Outbox')
+      return `/members/${message.recipientUsername}`;
     else return `/members/${message.senderUsername}`;
   }
 
-  pageChanged(event: any){
-    if(this.pageNumber != event.page){
+  pageChanged(event: any) {
+    if (this.pageNumber != event.page) {
       this.pageNumber = event.page;
       this.loadMessage();
     }
