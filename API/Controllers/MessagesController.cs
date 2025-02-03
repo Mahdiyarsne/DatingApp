@@ -28,7 +28,12 @@ namespace API.Controllers
                 createMessageDto.RecipientUsername
             );
 
-            if (recipient == null || sender == null)
+            if (
+                recipient == null
+                || sender == null
+                || sender.UserName == null
+                || recipient.UserName == null
+            )
                 return BadRequest("Connot send message at this time");
 
             var message = new Message
@@ -90,7 +95,8 @@ namespace API.Controllers
                 messageRepository.DeleteMessage(message);
             }
 
-            if(await messageRepository.SaveAllAsync()) return Ok();
+            if (await messageRepository.SaveAllAsync())
+                return Ok();
 
             return BadRequest("Problem deleting the message");
         }
