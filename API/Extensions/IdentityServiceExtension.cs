@@ -38,6 +38,14 @@ namespace API.Extensions
                         ValidateAudience = false,
                     };
                 });
+
+            services
+                .AddAuthorizationBuilder()
+                .AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin"))
+                .AddPolicy(
+                    "ModeraterPhotoRole",
+                    policy => policy.RequireRole("Admin", "Moderator")
+                );
             return services;
         }
     }
