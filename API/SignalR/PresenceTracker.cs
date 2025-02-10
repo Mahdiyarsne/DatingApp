@@ -50,4 +50,22 @@ public class PresenceTracker
 
         return Task.FromResult(onlineUsers);
     }
+
+    public static Task<List<string>> GetConnectionsForUser(string username)
+    {
+        List<string> connenctionIds;
+        if (OnlineUsers.TryGetValue(username, out var connections))
+        {
+            lock (connections)
+            {
+                connenctionIds = connections.ToList();
+            }
+        }
+        else
+        {
+            connenctionIds = [];
+        }
+
+        return Task.FromResult(connenctionIds);
+    }
 }
