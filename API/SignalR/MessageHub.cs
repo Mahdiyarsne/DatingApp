@@ -25,19 +25,22 @@ public class MessageHub(
         var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
 
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        await AddToGroup(groupName);
+        var group = await AddToGroup(groupName);
+
+        await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
 
         var messages = await messageRepository.GetMessageThread(
             Context.User.GetUsername(),
             otherUser!
         );
 
-        await Clients.Group(groupName).SendAsync("RecevivedMessageThread", messages);
+        await Clients.Caller.SendAsync("RecevivedMessageThread", messages);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await RemoveFromMessageGroup();
+        var group = await RemoveFromMessageGroup();
+        await Clients.Group(group.Name).SendAsync("UpdatedGroup", group);
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -94,7 +97,7 @@ public class MessageHub(
         }
     }
 
-    private async Task<bool> AddToGroup(string groupName)
+    private async Task<Group> AddToGroup(string groupName)
     {
         var username = Context.User?.GetUsername() ?? throw new Exception("Cannot get username");
         var group = await messageRepository.GetMessageGroup(groupName);
@@ -110,17 +113,25 @@ public class MessageHub(
             messageRepository.AddGroup(group);
         }
         group.Connections.Add(connection);
-        return await messageRepository.SaveAllAsync();
+        if (await messageRepository.SaveAllAsync())
+            return group;
+        throw new HubException("Faild to join group");
     }
 
-    private async Task RemoveFromMessageGroup()
+    private async Task<Group> RemoveFromMessageGroup()
     {
-        var connection = await messageRepository.GetConnection(Context.ConnectionId);
-        if (connection != null)
+        var group = await messageRepository.GetGroupConnection(Context.ConnectionId);
+        var connection = group?.Connections.FirstOrDefault(x =>
+            x.ConnectionId == Context.ConnectionId
+        );
+        if (connection != null && group != null)
         {
             messageRepository.RemoveConnection(connection);
-            await messageRepository.SaveAllAsync();
+            if (await messageRepository.SaveAllAsync())
+                return group;
         }
+
+        throw new Exception("Faild to remove from group");
     }
 
     private string GetGroupName(string caller, string? other)
