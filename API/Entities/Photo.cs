@@ -10,6 +10,7 @@ public class Photo
 
     public bool IsMain { get; set; }
 
+    public bool IsApproved { get; set; } = false;
     public string? PublicId { get; set; }
 
     //Navgation properties

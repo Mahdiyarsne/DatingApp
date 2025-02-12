@@ -19,10 +19,12 @@ public class DataContext(DbContextOptions options)
     >(options)
 {
     public DbSet<UserLike> Likes { get; set; }
+
+    public DbSet<Photo> Photos { get; set; }
     public DbSet<Message> Messages { get; set; }
 
     public DbSet<Group> Groups { get; set; }
-    public DbSet<Connection> Connections {get; set;}
+    public DbSet<Connection> Connections { get; set; }
 
     protected override void OnModelCreating(ModelBuilder bulider)
     {
@@ -69,5 +71,7 @@ public class DataContext(DbContextOptions options)
             .HasOne(x => x.Sender)
             .WithMany(x => x.MessagesSent)
             .OnDelete(DeleteBehavior.Restrict);
+
+        bulider.Entity<Photo>().HasQueryFilter(p => p.IsApproved);
     }
 }
