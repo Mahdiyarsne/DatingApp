@@ -84,7 +84,7 @@ namespace API.Data.Implementation
             string recipientUsername
         )
         {
-            var messages = await context
+            var query = context
                 .Messages.Where(x =>
                     x.RecipientUsername == currentUsername
                         && x.RecipientDeleted == false
@@ -94,10 +94,9 @@ namespace API.Data.Implementation
                         && x.RecipientUsername == recipientUsername
                 )
                 .OrderBy(x => x.MessageSent)
-                .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
-                .ToListAsync();
+                .AsQueryable();
 
-            var unreadMessages = messages
+            var unreadMessages = query
                 .Where(x => x.DateRead == null && x.RecipientUsername == currentUsername)
                 .ToList();
 
@@ -106,7 +105,7 @@ namespace API.Data.Implementation
                 unreadMessages.ForEach(x => x.DateRead = DateTime.Now);
             }
 
-            return messages;
+            return await query.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
         }
 
         public void RemoveConnection(Connection connection)
