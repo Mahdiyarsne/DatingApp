@@ -42,30 +42,31 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
         {
             case "liked":
                 query = likes
-                   .Where(x => x.SourceUserId == likesParams.UserId)
-                   .Select(x => x.TargetUser)
-                   .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
+                    .Where(x => x.SourceUserId == likesParams.UserId)
+                    .Select(x => x.TargetUser)
+                    .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
                 break;
             case "likedBy":
                 query = likes
-                     .Where(x => x.TargetUserId == likesParams.UserId)
-                     .Select(x => x.SourceUser)
-                     .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
+                    .Where(x => x.TargetUserId == likesParams.UserId)
+                    .Select(x => x.SourceUser)
+                    .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
                 break;
             default:
                 var likeIds = await GetCurrentUserLikeIds(likesParams.UserId);
 
                 query = likes
-                    .Where(x => x.TargetUserId == likesParams.UserId && likeIds.Contains(x.SourceUserId))
+                    .Where(x =>
+                        x.TargetUserId == likesParams.UserId && likeIds.Contains(x.SourceUserId)
+                    )
                     .Select(x => x.SourceUser)
                     .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
-                    break;
+                break;
         }
-        return await PageList<MemberDto>.CreateAaync(query, likesParams.PageNumber, likesParams.PageSize);
-    }
-
-    public async Task<bool> SaveChanges()
-    {
-        return await context.SaveChangesAsync() > 0;
+        return await PageList<MemberDto>.CreateAaync(
+            query,
+            likesParams.PageNumber,
+            likesParams.PageSize
+        );
     }
 }
