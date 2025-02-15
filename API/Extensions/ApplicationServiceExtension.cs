@@ -18,7 +18,7 @@ namespace API.Extensions
             services.AddControllers();
             services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+                opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
 
             services.AddCors();
@@ -27,7 +27,7 @@ namespace API.Extensions
             services.AddScoped<IPhotoRepository, PhotoRepository>();
             services.AddScoped<ILikesRepository, LikesRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
-            services.AddScoped<IUnitOfWork,UintOfWork>();
+            services.AddScoped<IUnitOfWork, UintOfWork>();
             services.AddScoped<LogUserActivity>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
